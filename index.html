@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Regelwerk</title>
+<meta name="description" content="Zykluskalender mit Vorhersagen, Symptom- und Stimmungstagebuch. Daten bleiben auf dem Gerät.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Regelwerk">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --surface-2: #f3f2ef;
+  --line: #e4e2dd;
+  --grid: #ecebe7;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --text-3: #7d7c78;
+  --accent: #c43a5c;
+  --accent-ink: #ffffff;
+  --series-1: #2a78d6;
+  --good-text: #006300;
+  --critical-text: #b42c2c;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+  /* Blutung: Schmierblutung, leicht, mittel, stark */
+  --bl1: #f9d4d3; --bl2: #f0a09f; --bl3: #e86866; --bl4: #c4302f;
+  --period: #e34948;
+  --fert-bg: #d4f1e5; --fert: #1baf7a;
+  --pms-bg: #e7e3fa; --pms: #6250d6;
+  /* Heatmap (sequentiell, blau) */
+  --h0: #f3f2ef; --h1: #cde2fb; --h2: #9ec5f4; --h3: #6da7ec; --h4: #3987e5; --h5: #256abf; --h6: #184f95; --h7: #0d366b;
+  /* Regler 0..10 (warm) */
+  --p0: #f3f2ef;
+  --p1: #fdeee6; --p2: #fbdccc; --p3: #f8c3a8; --p4: #f5a683; --p5: #ef8a5f;
+  --p6: #e66d3f; --p7: #d1532a; --p8: #b3401f; --p9: #8f3118; --p10: #6b2412;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #161615; --surface: #1f1f1e; --surface-2: #2a2a28; --line: #383835; --grid: #2e2e2c;
+    --text: #f0efec; --text-2: #c3c2b7; --text-3: #8f8e86; --accent: #e8668a; --accent-ink: #1a1a19;
+    --series-1: #3987e5; --good-text: #4cc94c; --critical-text: #f07a7a; --shadow: none;
+    --bl1: #4a2828; --bl2: #7a3434; --bl3: #b84444; --bl4: #e66767;
+    --period: #e66767;
+    --fert-bg: #173d30; --fert: #199e70;
+    --pms-bg: #2c2850; --pms: #9085e9;
+    --h0: #2a2a28; --h1: #104281; --h2: #184f95; --h3: #1c5cab; --h4: #2a78d6; --h5: #5598e7; --h6: #86b6ef; --h7: #b7d3f6;
+    --p0: #2a2a28;
+    --p1: #3b2a22; --p2: #4e3022; --p3: #653623; --p4: #7e3c22; --p5: #9a4422;
+    --p6: #b84f26; --p7: #d2602f; --p8: #e57c4c; --p9: #f29c72; --p10: #ffc2a1;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #161615; --surface: #1f1f1e; --surface-2: #2a2a28; --line: #383835; --grid: #2e2e2c;
+  --text: #f0efec; --text-2: #c3c2b7; --text-3: #8f8e86; --accent: #e8668a; --accent-ink: #1a1a19;
+  --series-1: #3987e5; --good-text: #4cc94c; --critical-text: #f07a7a; --shadow: none;
+  --bl1: #4a2828; --bl2: #7a3434; --bl3: #b84444; --bl4: #e66767;
+  --period: #e66767;
+  --fert-bg: #173d30; --fert: #199e70;
+  --pms-bg: #2c2850; --pms: #9085e9;
+  --h0: #2a2a28; --h1: #104281; --h2: #184f95; --h3: #1c5cab; --h4: #2a78d6; --h5: #5598e7; --h6: #86b6ef; --h7: #b7d3f6;
+  --p0: #2a2a28;
+  --p1: #3b2a22; --p2: #4e3022; --p3: #653623; --p4: #7e3c22; --p5: #9a4422;
+  --p6: #b84f26; --p7: #d2602f; --p8: #e57c4c; --p9: #f29c72; --p10: #ffc2a1;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  padding: env(safe-area-inset-top) 0 calc(72px + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust: 100%;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+main { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+h1 { font-size: 28px; line-height: 1.15; margin: 16px 0 12px; letter-spacing: -0.01em; }
+h2 { font-size: 17px; margin: 0 0 4px; }
+.sub { color: var(--text-2); font-size: 14px; margin: 0 0 12px; }
+.muted { color: var(--text-3); }
+.small { font-size: 13px; color: var(--text-2); }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px; margin: 0 0 14px; box-shadow: var(--shadow);
+}
+.view { display: none; }
+.view.active { display: block; }
+
+nav.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; justify-content: center;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+}
+nav.tabs button {
+  flex: 1; max-width: 160px; background: none; border: 0; padding: 6px 4px 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: var(--text-3);
+}
+nav.tabs button svg { width: 24px; height: 24px; }
+nav.tabs button.active { color: var(--accent); }
+
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 14px; font-size: 15px; min-height: 40px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.danger { color: var(--critical-text); }
+.btn:active { opacity: .7; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-size: 14px; min-height: 36px; }
+.chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 10px; padding: 2px; gap: 2px; }
+.seg button { border: 0; background: none; border-radius: 8px; padding: 6px 10px; font-size: 14px; color: var(--text-2); min-height: 32px; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.icon-btn { width: 40px; height: 40px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; }
+.icon-btn svg { width: 20px; height: 20px; }
+
+/* Heute-Karte */
+.today-card .big { font-size: 30px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+.today-card .phase { font-size: 15px; color: var(--text-2); margin-top: 2px; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.fact { background: var(--surface-2); border-radius: 12px; padding: 10px; }
+.fact .k { font-size: 12px; color: var(--text-2); }
+.fact .n { font-size: 17px; font-weight: 700; margin-top: 2px; }
+.fact .s { font-size: 12px; color: var(--text-3); }
+.cyclebar { position: relative; height: 14px; border-radius: 7px; overflow: hidden; display: flex; margin: 14px 0 4px; background: var(--surface-2); }
+.cyclebar span { height: 100%; }
+.cyclebar-wrap { position: relative; }
+.cyclebar-marker { position: absolute; top: 8px; width: 3px; height: 24px; border-radius: 2px; background: var(--text); transform: translateX(-1px); }
+.cyclebar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); }
+.disclaimer { font-size: 12px; color: var(--text-3); margin-top: 10px; }
+
+/* Kalender */
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 10px; }
+.cal-head h2 { font-size: 20px; margin: 0; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-dow { text-align: center; font-size: 12px; color: var(--text-3); padding-bottom: 2px; }
+.cal-day {
+  aspect-ratio: 1 / 1.1; border-radius: 10px; border: 0; background: var(--surface-2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; padding: 0; min-width: 0; font-size: 15px;
+}
+.cal-day .d { font-weight: 600; line-height: 1; }
+.cal-day .cd { font-size: 10px; color: var(--text-3); margin-top: 3px; line-height: 1; }
+.cal-day.out { visibility: hidden; }
+.cal-day.today { outline: 2px solid var(--text); outline-offset: 1px; }
+.cal-day.fert { background: var(--fert-bg); }
+.cal-day.pms { background: var(--pms-bg); }
+.cal-day.pred { background: var(--surface); box-shadow: inset 0 0 0 2px var(--period); }
+.cal-day.ov::after { content: ""; position: absolute; top: 6px; left: 7px; width: 6px; height: 6px; border-radius: 3px; background: var(--fert); }
+.cal-day .dot { position: absolute; top: 5px; right: 6px; width: 5px; height: 5px; border-radius: 3px; background: currentColor; opacity: .6; }
+.cal-day.bleed .cd { color: inherit; opacity: .8; }
+.legend-cal { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12px; color: var(--text-2); margin-top: 12px; }
+.legend-cal span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-cal i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+/* Tageseintrag */
+.day-head { display: flex; align-items: center; gap: 8px; margin: 14px 0 10px; }
+.day-head .title { flex: 1; text-align: center; }
+.day-head .title b { display: block; font-size: 19px; }
+.day-head .title span { font-size: 13px; color: var(--text-3); }
+.pick { display: grid; gap: 6px; }
+.pick.c5 { grid-template-columns: repeat(5, 1fr); }
+.pick.c3 { grid-template-columns: repeat(3, 1fr); }
+.pick button {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px 2px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; min-height: 64px; line-height: 1.15; text-align: center;
+}
+.pick button[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); font-weight: 600; }
+.pick button .ic { font-size: 22px; line-height: 1; height: 24px; display: grid; place-items: center; }
+.drops { display: flex; gap: 1px; height: 24px; align-items: center; }
+.drops svg { width: 11px; height: 15px; }
+.field-label { font-weight: 600; margin: 0 0 8px; display: block; }
+.mini-label { display: block; font-size: 14px; color: var(--text-2); margin: 12px 0 6px; }
+.slot { display: grid; grid-template-columns: 1fr 28px; align-items: center; gap: 6px; }
+.slot .val { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+.slot .val.zero { color: var(--text-3); font-weight: 400; }
+.sym-row { padding: 6px 0 2px; border-top: 1px solid var(--line); }
+.sym-row:first-of-type { border-top: 0; }
+.sym-row .name { font-size: 15px; }
+input[type=range] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; margin: 0;
+  --fill: 0%; --c: var(--p0);
+}
+input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--c) 0 var(--fill), var(--surface-2) var(--fill) 100%); }
+input[type=range]::-moz-range-track { height: 8px; border-radius: 4px; background: var(--surface-2); }
+input[type=range]::-moz-range-progress { height: 8px; border-radius: 4px; background: var(--c); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 13px; margin-top: -9px; background: #fff; border: 1px solid rgba(0,0,0,.15); box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border-radius: 13px; background: #fff; border: 1px solid rgba(0,0,0,.15); }
+.opt { padding: 6px 0 4px; }
+.opt + .opt { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 10px; }
+.opt-head { display: flex; align-items: baseline; gap: 8px; }
+.opt-head .lab { flex: 1; font-size: 15px; }
+.opt-head .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+.opt-head .v.unset { color: var(--text-3); font-weight: 400; }
+.opt-head .reset { border: 0; background: var(--surface-2); color: var(--text-2); border-radius: 12px; width: 24px; height: 24px; font-size: 14px; line-height: 1; padding: 0; }
+.opt .ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); margin-top: -4px; }
+.opt.unset input[type=range]::-webkit-slider-thumb { opacity: .45; }
+.opt.unset input[type=range]::-moz-range-thumb { opacity: .45; }
+.symv { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.symv .e { font-size: 34px; line-height: 1; width: 44px; text-align: center; }
+.symv .t.unset { color: var(--text-3); }
+textarea, input.text, input.num {
+  width: 100%; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 10px; font-size: 16px;
+}
+textarea { min-height: 90px; resize: vertical; }
+textarea.short { min-height: 0; }
+input.num { width: 120px; }
+.saved-hint { font-size: 13px; color: var(--text-3); text-align: center; min-height: 18px; margin: 6px 0; }
+
+/* Auswertung */
+.tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+@media (min-width: 560px) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); }
+.tile .k { font-size: 13px; color: var(--text-2); }
+.tile .n { font-size: 28px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 12px; color: var(--text-3); }
+.chart-wrap { position: relative; width: 100%; }
+.chart-wrap svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.chart-wrap text { font-size: 11px; fill: var(--text-3); font-variant-numeric: tabular-nums; }
+.chart-wrap text.lbl { fill: var(--text-2); font-weight: 600; }
+.tooltip {
+  position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 6px 9px; font-size: 13px; box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  white-space: nowrap; display: none; z-index: 5;
+}
+.tooltip .t { color: var(--text-3); font-size: 12px; margin-bottom: 2px; }
+.tooltip b { font-variant-numeric: tabular-nums; }
+.empty { color: var(--text-3); font-size: 14px; padding: 20px 0; text-align: center; }
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+table.data th, table.data td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+table.data th { color: var(--text-2); font-weight: 600; font-size: 13px; }
+table.data .num { text-align: right; }
+.table-toggle { background: none; border: 0; color: var(--text-2); font-size: 13px; padding: 6px 0 0; text-decoration: underline; }
+.chart-h { font-size: 15px; margin: 14px 0 4px; }
+.heat-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -14px; padding: 0 14px; }
+.heat { border-collapse: separate; border-spacing: 2px; font-size: 11px; }
+.heat th { font-weight: 400; color: var(--text-3); text-align: center; min-width: 18px; height: 16px; }
+.heat th.rl { position: sticky; left: 0; background: var(--surface); text-align: left; font-size: 13px; color: var(--text); padding-right: 6px; white-space: nowrap; z-index: 1; min-width: 0; }
+.heat th.ov { color: var(--fert); font-weight: 700; }
+.heat td { width: 18px; min-width: 18px; height: 22px; border-radius: 4px; padding: 0; }
+.heat td:focus { outline: 2px solid var(--text); }
+.heat-legend { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); margin-top: 10px; flex-wrap: wrap; }
+.heat-legend i { width: 16px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* Daten */
+.banner { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; font-size: 14px; margin: 0 0 14px; display: flex; gap: 10px; align-items: center; }
+.banner .btn { margin-left: auto; padding: 6px 10px; min-height: 32px; font-size: 14px; }
+.stack { display: flex; flex-direction: column; gap: 8px; }
+.stack .btn { width: 100%; text-align: left; }
+.setting { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.setting:first-of-type { border-top: 0; }
+.setting span { font-size: 15px; }
+.setting small { display: block; color: var(--text-3); font-size: 12px; }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; flex: none; }
+.stepper button { border: 0; background: var(--surface-2); width: 38px; height: 36px; font-size: 20px; }
+.stepper span { min-width: 38px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.toast {
+  position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  background: var(--text); color: var(--bg); border-radius: 10px; padding: 8px 14px; font-size: 14px;
+  opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 30;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<main>
+
+<!-- ================= Kalender ================= -->
+<section class="view active" id="view-cal">
+  <h1>Regelwerk</h1>
+  <div id="backup-banner"></div>
+  <div class="card today-card" id="today-card"></div>
+  <div class="card">
+    <div class="cal-head">
+      <button class="icon-btn" id="cal-prev" aria-label="Voriger Monat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <h2 id="cal-title"></h2>
+      <button class="icon-btn" id="cal-next" aria-label="Nächster Monat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="legend-cal">
+      <span><i style="background:var(--bl3)"></i>Periode</span>
+      <span><i style="box-shadow: inset 0 0 0 2px var(--period)"></i>Periode erwartet</span>
+      <span><i style="background:var(--fert-bg)"></i>Fruchtbar</span>
+      <span><i style="background:var(--fert);width:8px;height:8px;border-radius:4px"></i>Eisprung (geschätzt)</span>
+      <span><i style="background:var(--pms-bg)"></i>PMS möglich</span>
+    </div>
+    <p class="small" style="margin:10px 0 0">Kleine Zahl = Zyklustag. Tippe auf einen Tag, um ihn einzutragen.</p>
+  </div>
+</section>
+
+<!-- ================= Tageseintrag ================= -->
+<section class="view" id="view-day">
+  <div class="day-head">
+    <button class="icon-btn" id="day-prev" aria-label="Vortag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <div class="title"><b id="day-title"></b><span id="day-subtitle"></span></div>
+    <button class="icon-btn" id="day-next" aria-label="Nächster Tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div class="row" style="justify-content:center; margin-bottom:12px">
+    <button class="btn" id="day-today">Heute</button>
+  </div>
+
+  <div class="card">
+    <h2>Blutung</h2>
+    <div class="pick c5" id="bleed"></div>
+  </div>
+  <div class="card">
+    <h2>Symptome</h2>
+    <p class="sub">0 = keine, 10 = sehr stark</p>
+    <div id="symptoms"></div>
+  </div>
+  <div class="card">
+    <h2>Stimmung &amp; Energie</h2>
+    <div id="mood"></div>
+  </div>
+  <div class="card">
+    <h2>Zervixschleim</h2>
+    <div class="pick c5" id="mucus"></div>
+  </div>
+  <div class="card">
+    <h2>Sex</h2>
+    <div class="pick c3" id="sex"></div>
+  </div>
+  <div class="card">
+    <h2>Schlaf</h2>
+    <div id="sleep"></div>
+  </div>
+  <div class="card">
+    <h2>Sport &amp; Gewicht</h2>
+    <div id="sport"></div>
+    <label class="mini-label" for="sport-note">Was für Sport?</label>
+    <input type="text" class="text" id="sport-note" placeholder="z. B. Laufen, Yoga, Krafttraining">
+    <label class="mini-label" for="weight">Gewicht (kg)</label>
+    <input type="text" inputmode="decimal" class="num" id="weight" placeholder="z. B. 62,5">
+  </div>
+  <div class="card">
+    <label class="field-label" for="day-med">Medikamente</label>
+    <textarea class="short" id="day-med" rows="3" placeholder="z. B. Ibuprofen 400 mg, Pille, Magnesium"></textarea>
+    <label class="field-label" for="day-note" style="margin-top:14px">Notizen</label>
+    <textarea id="day-note" placeholder="Alles, was sonst wichtig ist …"></textarea>
+  </div>
+  <div class="saved-hint" id="saved-hint"></div>
+  <div class="row" style="justify-content:center; margin-bottom: 24px">
+    <button class="btn danger" id="day-clear">Eintrag dieses Tages löschen</button>
+  </div>
+</section>
+
+<!-- ================= Auswertung ================= -->
+<section class="view" id="view-stats">
+  <h1>Auswertung</h1>
+  <div class="row" style="margin-bottom:14px">
+    <span class="small">Zyklen:</span>
+    <div class="seg" id="f-cycles" role="group" aria-label="Anzahl Zyklen">
+      <button data-v="3">letzte 3</button><button data-v="6">6</button><button data-v="12">12</button><button data-v="all">alle</button>
+    </div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2>Zykluslänge</h2>
+    <p class="sub">Tage vom ersten Periodentag bis zum nächsten. Gestrichelt: Durchschnitt.</p>
+    <div class="chart-wrap" id="cycle-chart"></div>
+    <h3 class="chart-h">Periodenlänge</h3>
+    <div class="chart-wrap" id="period-chart"></div>
+    <button class="table-toggle" id="cycle-table-toggle">Als Tabelle anzeigen</button>
+    <div id="cycle-table" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2>Symptome nach Zyklustag</h2>
+    <p class="sub" id="heat-sub"></p>
+    <div class="heat-scroll"><div id="heat"></div></div>
+    <div class="heat-legend" id="heat-legend"></div>
+    <div class="chart-wrap" id="heat-tip-host" style="height:0"></div>
+  </div>
+</section>
+
+<!-- ================= Daten ================= -->
+<section class="view" id="view-data">
+  <h1>Einstellungen &amp; Sicherung</h1>
+  <div class="card">
+    <h2>Startwerte</h2>
+    <p class="small">Gelten, solange noch zu wenige Zyklen eingetragen sind. Danach rechnet die App mit dem Durchschnitt deiner letzten 6 Zyklen.</p>
+    <div id="settings"></div>
+  </div>
+  <div class="card">
+    <h2>Speicherort</h2>
+    <p class="small" id="storage-info"></p>
+  </div>
+  <div class="card">
+    <h2>Sicherung exportieren</h2>
+    <p class="small">Speichert alle Einträge als Datei (z. B. in „Dateien“ → iCloud Drive). Empfohlen: alle 1–2 Wochen.</p>
+    <div class="stack">
+      <button class="btn primary" id="export-json">Sicherung speichern (.json)</button>
+      <button class="btn" id="export-csv">Tabelle für Excel/Numbers (.csv)</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sicherung laden</h2>
+    <p class="small">Lädt eine zuvor gespeicherte .json-Datei. Du kannst sie mit den vorhandenen Einträgen zusammenführen oder alles ersetzen.</p>
+    <div class="stack">
+      <button class="btn" id="import-merge">Laden &amp; zusammenführen</button>
+      <button class="btn" id="import-replace">Laden &amp; alles ersetzen</button>
+    </div>
+    <input type="file" id="import-file" accept=".json,application/json" hidden>
+  </div>
+  <div class="card">
+    <h2>Alles löschen</h2>
+    <p class="small">Entfernt alle Einträge von diesem Gerät. Vorher eine Sicherung speichern!</p>
+    <button class="btn danger" id="wipe">Alle Daten löschen</button>
+  </div>
+</section>
+</main>
+
+<nav class="tabs" id="tabs">
+  <button data-view="cal" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Kalender</button>
+  <button data-view="day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Eintrag</button>
+  <button data-view="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M6 15l4-5 3 3 5-7"/></svg>Auswertung</button>
+  <button data-view="data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg>Sicherung</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------ *
+ * Was erfasst wird
+ * ------------------------------------------------------------------ */
+const BLEED = ["Keine", "Schmier­blutung", "Leicht", "Mittel", "Stark"];
+const SYMPTOMS = [
+  { id: "kraempfe", name: "Krämpfe / Unterleibsschmerzen", short: "Krämpfe" },
+  { id: "kopf", name: "Kopfschmerzen", short: "Kopfschm." },
+  { id: "ruecken", name: "Rückenschmerzen", short: "Rücken" },
+  { id: "brust", name: "Brustspannen", short: "Brust" },
+  { id: "haut", name: "Hautunreinheiten", short: "Haut" },
+  { id: "uebelkeit", name: "Übelkeit" },
+  { id: "durchfall", name: "Durchfall" },
+  { id: "blaehungen", name: "Blähungen" },
+  { id: "heisshunger", name: "Heißhunger" },
+];
+const SYM_NAME = Object.fromEntries(SYMPTOMS.map(s => [s.id, s.name]));
+const MOOD = [
+  { id: "stimmung", name: "Stimmung", lo: "sehr schlecht", hi: "sehr gut" },
+  { id: "energie", name: "Energie", lo: "erschöpft", hi: "voller Energie" },
+  { id: "stress", name: "Stress", lo: "entspannt", hi: "sehr gestresst" },
+  { id: "schwankungen", name: "Stimmungsschwankungen", lo: "keine", hi: "sehr stark" },
+];
+const MUCUS = [["🏜️", "Trocken"], ["🩹", "Klebrig"], ["🧴", "Cremig"], ["💧", "Wässrig"], ["🥚", "Spinnbar"]];
+const SEX = [["–", "Kein Sex"], ["🛡️", "Geschützt"], ["❤️", "Unge­schützt"]];
+const SLEEP = [["😫", "Sehr schlecht"], ["😟", "Schlecht"], ["😐", "Mittel"], ["🙂", "Gut"], ["😴", "Sehr gut"]];
+const DEFAULT_SETTINGS = { cycle: 28, period: 5, luteal: 14, pms: 5 };
+
+/* ------------------------------------------------------------------ *
+ * Speicher: localStorage (bleibt auf dem Gerät)
+ * ------------------------------------------------------------------ */
+const KEY = "regelwerk.v1";
+let db = load();
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) { const d = JSON.parse(raw); if (d && typeof d === "object" && d.days) return normalize(d); }
+  } catch (e) { console.warn("Laden fehlgeschlagen", e); }
+  return normalize({});
+}
+function normalize(d) {
+  const st = { ...DEFAULT_SETTINGS };
+  for (const k of Object.keys(st)) if (Number.isFinite(d.settings?.[k])) st[k] = d.settings[k];
+  return { version: 1, days: d.days && typeof d.days === "object" ? d.days : {}, settings: st, lastExport: d.lastExport || null };
+}
+let storageOk = true;
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(db)); storageOk = true; }
+  catch (e) { storageOk = false; toast("Speichern nicht möglich – bitte Sicherung exportieren!"); }
+  cycleCache = null;
+}
+let persisted = null;
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { persisted = p; renderStorageInfo(); }).catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+
+/* ------------------------------------------------------------------ *
+ * Datumshilfen
+ * ------------------------------------------------------------------ */
+const pad = n => String(n).padStart(2, "0");
+const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseKey = k => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const diffDays = (a, b) => Math.round((a - b) / 86400000);
+const today = () => { const t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate()); };
+const MONTHS = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+const DOW = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+const DOW_L = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+const dowMon = d => (d.getDay() + 6) % 7;
+const fmtDate = d => `${d.getDate()}. ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+const fmtDM = d => `${d.getDate()}. ${MONTHS[d.getMonth()].slice(0, 3)}.`;
+const fmtShort = d => `${d.getDate()}.${d.getMonth() + 1}.`;
+const fmtNum = (v, dig = 1) => v == null || isNaN(v) ? "–" : v.toLocaleString("de-AT", { minimumFractionDigits: dig, maximumFractionDigits: dig });
+const fmtHours = h => h == null ? "–" : `${fmtNum(h, h % 1 ? 1 : 0)} h`;
+const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+const inDays = n => n === 0 ? "heute" : n === 1 ? "morgen" : n === -1 ? "gestern" : n > 0 ? `in ${n} Tagen` : `vor ${-n} Tagen`;
+
+/* ------------------------------------------------------------------ *
+ * Zyklus-Berechnung
+ * Periode = zusammenhängende Blutungstage (1 Tag Lücke erlaubt) mit mindestens
+ * einem Tag „leicht“ oder stärker. Zyklustag 1 = erster Tag mit leichter Blutung.
+ * Eisprung ≈ nächste Periode − Lutealphase (Standard 14 Tage).
+ * ------------------------------------------------------------------ */
+let cycleCache = null;
+function cycles() {
+  if (cycleCache) return cycleCache;
+  const S = db.settings;
+  const bleedKeys = Object.keys(db.days).filter(k => db.days[k].bl > 0).sort();
+  const runs = [];
+  for (const k of bleedKeys) {
+    const d = parseKey(k), last = runs[runs.length - 1];
+    if (last && diffDays(d, last.lastDay) <= 2) { last.days.push(k); last.lastDay = d; }
+    else runs.push({ days: [k], lastDay: d });
+  }
+  const periods = [];
+  for (const r of runs) {
+    const startKey = r.days.find(k => db.days[k].bl >= 2);
+    if (!startKey) continue;
+    const start = parseKey(startKey);
+    periods.push({ start, end: r.lastDay, len: diffDays(r.lastDay, start) + 1 });
+  }
+  const list = periods.map((p, i) => ({
+    start: p.start, plen: p.len,
+    len: i < periods.length - 1 ? diffDays(periods[i + 1].start, p.start) : null,
+  }));
+  const done = list.filter(c => c.len != null && c.len >= 15 && c.len <= 60);
+  const recent = done.slice(-6);
+  const avgCycle = recent.length ? Math.round(mean(recent.map(c => c.len))) : S.cycle;
+  const recentP = list.slice(-6).filter(c => c.plen <= 14);
+  const avgPeriod = recentP.length ? Math.round(mean(recentP.map(c => c.plen))) : S.period;
+  // Vorhersagen
+  const t = today();
+  const lastStart = list.length ? list[list.length - 1].start : null;
+  const preds = [];
+  let overdue = 0;
+  if (lastStart) {
+    let s = addDays(lastStart, avgCycle);
+    if (s <= t) { overdue = diffDays(t, s); s = addDays(t, 1); }
+    for (let i = 0; i < 4; i++) { preds.push(s); s = addDays(s, avgCycle); }
+  }
+  // Markierungen je Tag: vergangene Zyklen (aus echten Starts) + vorhergesagte
+  const mark = {};
+  const put = (d, k) => { const key = keyOf(d); (mark[key] = mark[key] || {})[k] = true; };
+  const nextStarts = [...periods.slice(1).map(p => p.start), ...preds];
+  for (const ns of nextStarts) {
+    const ov = addDays(ns, -S.luteal);
+    put(ov, "ov");
+    for (let i = -5; i <= 1; i++) put(addDays(ov, i), "fert");
+    for (let i = 1; i <= S.pms; i++) put(addDays(ns, -i), "pms");
+  }
+  for (const p of preds) for (let i = 0; i < avgPeriod; i++) put(addDays(p, i), "pred");
+  const starts = [...periods.map(p => p.start), ...preds];
+  cycleCache = { periods, list, done, avgCycle, avgPeriod, preds, overdue, mark, starts, lastStart };
+  return cycleCache;
+}
+// Zyklustag eines Datums (1 = erster Periodentag) oder null
+function cycleDay(d) {
+  const { starts } = cycles();
+  let best = null;
+  for (const s of starts) if (s <= d) best = s; else break;
+  if (!best) return null;
+  const n = diffDays(d, best) + 1;
+  return n <= 60 ? n : null;
+}
+
+/* ------------------------------------------------------------------ *
+ * Allgemeine Helfer
+ * ------------------------------------------------------------------ */
+let currentView = "cal";
+function show(view) {
+  currentView = view;
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + view));
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+  if (view === "cal") renderCal();
+  if (view === "day") renderDay();
+  if (view === "stats") renderStats();
+  if (view === "data") renderData();
+  window.scrollTo(0, 0);
+}
+document.getElementById("tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.view); });
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (k === "style") n.style.cssText = v;
+    else n.setAttribute(k, v);
+  }
+  for (const c of kids) if (c != null) n.append(c);
+  return n;
+};
+const isDark = () => document.documentElement.dataset.theme === "dark" ||
+  (document.documentElement.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+const painVar = v => v > 0 ? `var(--p${Math.min(10, Math.round(v))})` : "var(--p0)";
+const filled = o => o && Object.values(o).some(v => v != null && v !== "");
+function hasContent(e) {
+  return !!e && (e.bl > 0 || Object.values(e.sym || {}).some(v => v > 0) || filled(e.mood) || e.mucus || e.sex ||
+    filled(e.sl) || e.sport != null || (e.sportNote || "").trim() || e.weight != null || (e.med || "").trim() || (e.note || "").trim());
+}
+function drops(n) {
+  const box = el("span", { class: "drops" });
+  for (let i = 0; i < Math.max(1, n); i++) {
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("viewBox", "0 0 11 15");
+    s.innerHTML = `<path d="M5.5 0.5C5.5 0.5 1 6.2 1 9.6a4.5 4.5 0 0 0 9 0C10 6.2 5.5.5 5.5.5z" fill="${n ? "var(--bl" + Math.max(1, n) + ")" : "none"}" stroke="${n ? "none" : "var(--text-3)"}"/>`;
+    box.append(s);
+  }
+  return box;
+}
+
+/* ------------------------------------------------------------------ *
+ * Kalender & Heute
+ * ------------------------------------------------------------------ */
+let calMonth = new Date(today().getFullYear(), today().getMonth(), 1);
+document.getElementById("cal-prev").onclick = () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() - 1, 1); renderCal(); };
+document.getElementById("cal-next").onclick = () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + 1, 1); renderCal(); };
+
+function renderBackupBanner() {
+  const box = document.getElementById("backup-banner");
+  box.textContent = "";
+  if (!Object.keys(db.days).length) return;
+  const last = db.lastExport ? new Date(db.lastExport) : null;
+  const days = last ? Math.floor((Date.now() - last) / 86400000) : null;
+  if (last && days < 14) return;
+  box.append(el("div", { class: "banner" },
+    el("span", { text: last ? `Letzte Sicherung vor ${days} Tagen.` : "Noch keine Sicherung gespeichert." }),
+    el("button", { class: "btn", text: "Sichern", onclick: exportJson })));
+}
+
+function renderToday() {
+  const box = document.getElementById("today-card");
+  box.textContent = "";
+  const c = cycles(), t = today();
+  if (!c.lastStart) {
+    box.append(el("h2", { text: "Willkommen!" }),
+      el("p", { class: "sub", style: "margin:4px 0 12px", text: "Trag den ersten Tag deiner letzten Periode ein – dann berechnet die App Zyklustag, nächste Periode, Eisprung und PMS-Phase." }),
+      el("button", { class: "btn primary", text: "Periode eintragen", onclick: () => { curDay = t; show("day"); } }));
+    return;
+  }
+  const cd = cycleDay(t);
+  const m = c.mark[keyOf(t)] || {};
+  const bleeding = (db.days[keyOf(t)]?.bl || 0) > 0 || (cd && cd <= c.avgPeriod && diffDays(t, c.lastStart) < c.avgPeriod);
+  const nextP = c.preds[0];
+  const ov = nextP ? addDays(nextP, -db.settings.luteal) : null;
+  let phase;
+  if (c.overdue > 0) phase = `Periode seit ${c.overdue} ${c.overdue === 1 ? "Tag" : "Tagen"} überfällig`;
+  else if (bleeding) phase = "Periode";
+  else if (m.ov) phase = "Eisprung (geschätzt) · fruchtbare Phase";
+  else if (m.fert) phase = "Fruchtbare Phase (geschätzt)";
+  else if (m.pms) phase = "PMS-Phase möglich";
+  else if (ov && t < ov) phase = "Follikelphase";
+  else phase = "Lutealphase";
+  box.append(el("div", { class: "big", text: cd ? `Zyklustag ${cd}` : "Heute" }), el("div", { class: "phase", text: phase }));
+
+  // Zyklus-Balken
+  const C = c.overdue > 0 ? c.avgCycle + c.overdue : c.avgCycle;
+  const P = Math.min(c.avgPeriod, C);
+  const ovDay = C - db.settings.luteal + 1;
+  const fertA = Math.max(P + 1, ovDay - 5), fertB = Math.min(C, ovDay + 1);
+  const pmsA = Math.max(fertB + 1, C - db.settings.pms + 1);
+  const seg = (from, to, color) => to >= from ? el("span", { style: `width:${((to - from + 1) / C) * 100}%;background:${color}` }) : null;
+  const bar = el("div", { class: "cyclebar", role: "img", "aria-label": `Zyklustag ${cd} von etwa ${C}` },
+    seg(1, P, "var(--bl3)"), seg(P + 1, fertA - 1, "transparent"), seg(fertA, fertB, "var(--fert)"),
+    seg(fertB + 1, pmsA - 1, "transparent"), seg(pmsA, C, "var(--pms)"));
+  const wrap = el("div", { class: "cyclebar-wrap" }, bar);
+  if (cd) wrap.append(el("div", { class: "cyclebar-marker", style: `left:${Math.min(100, ((Math.min(cd, C) - 0.5) / C) * 100)}%` }));
+  box.append(wrap, el("div", { class: "cyclebar-labels" }, el("span", { text: "Tag 1" }), el("span", { text: `Tag ${C}` })));
+
+  const facts = el("div", { class: "facts" });
+  const fact = (k, n, s) => el("div", { class: "fact" }, el("div", { class: "k", text: k }), el("div", { class: "n", text: n }), s ? el("div", { class: "s", text: s }) : null);
+  if (nextP) {
+    facts.append(fact("Nächste Periode", c.overdue > 0 ? "überfällig" : fmtDM(nextP), c.overdue > 0 ? `erwartet war ${fmtDM(addDays(t, -c.overdue))}` : inDays(diffDays(nextP, t))));
+    const nextOv = ov >= t ? ov : addDays(c.preds[1], -db.settings.luteal);
+    facts.append(fact("Eisprung (geschätzt)", fmtDM(nextOv), inDays(diffDays(nextOv, t))));
+    const pmsStart = addDays(nextP, -db.settings.pms);
+    facts.append(fact("PMS möglich ab", fmtDM(pmsStart), pmsStart <= t && t < nextP ? "jetzt" : inDays(diffDays(pmsStart, t))));
+    facts.append(fact("Ø Zyklus", `${c.avgCycle} Tage`, c.done.length ? `aus ${Math.min(6, c.done.length)} Zyklen` : "Startwert"));
+  }
+  box.append(facts, el("p", { class: "disclaimer", text: "Alle Angaben sind Schätzungen aus deinen bisherigen Zyklen – keine sichere Verhütung und kein Ersatz für ärztlichen Rat." }));
+}
+
+function renderCal() {
+  renderBackupBanner();
+  renderToday();
+  const c = cycles();
+  const y = calMonth.getFullYear(), mo = calMonth.getMonth();
+  document.getElementById("cal-title").textContent = `${MONTHS[mo]} ${y}`;
+  const grid = document.getElementById("cal-grid");
+  grid.textContent = "";
+  for (const d of DOW) grid.append(el("div", { class: "cal-dow", text: d }));
+  const lead = dowMon(new Date(y, mo, 1));
+  const daysIn = new Date(y, mo + 1, 0).getDate();
+  const tk = keyOf(today());
+  for (let i = 0; i < lead; i++) grid.append(el("div", { class: "cal-day out" }));
+  for (let d = 1; d <= daysIn; d++) {
+    const date = new Date(y, mo, d), k = keyOf(date);
+    const e = db.days[k], m = c.mark[k] || {};
+    const b = el("button", { class: "cal-day" }, el("span", { class: "d", text: d }));
+    const labels = [fmtDate(date)];
+    if (k === tk) b.classList.add("today");
+    if (e?.bl > 0) {
+      b.classList.add("bleed");
+      b.style.background = `var(--bl${e.bl})`;
+      if (e.bl >= 3) b.style.color = isDark() ? "#1a1a19" : "#ffffff";
+      labels.push("Blutung: " + BLEED[e.bl].replace("­", ""));
+    } else if (m.pred && date > today()) { b.classList.add("pred"); labels.push("Periode erwartet"); }
+    else if (m.fert) { b.classList.add("fert"); labels.push("fruchtbar (geschätzt)"); }
+    else if (m.pms) { b.classList.add("pms"); labels.push("PMS möglich"); }
+    if (m.ov) { b.classList.add("ov"); labels.push("Eisprung (geschätzt)"); }
+    const cd = cycleDay(date);
+    if (cd) b.append(el("span", { class: "cd", text: cd }));
+    if (hasContent(e) && !(e.bl > 0 && Object.keys(e).length <= 1)) b.append(el("i", { class: "dot" }));
+    b.setAttribute("aria-label", labels.join(", "));
+    b.onclick = () => { curDay = date; show("day"); };
+    grid.append(b);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Tageseintrag
+ * ------------------------------------------------------------------ */
+let curDay = today();
+document.getElementById("day-prev").onclick = () => { curDay = addDays(curDay, -1); renderDay(); };
+document.getElementById("day-next").onclick = () => { curDay = addDays(curDay, 1); renderDay(); };
+document.getElementById("day-today").onclick = () => { curDay = today(); renderDay(); };
+const cur = () => db.days[keyOf(curDay)];
+function getEntry() { const k = keyOf(curDay); if (!db.days[k]) db.days[k] = {}; return db.days[k]; }
+function cleanupDay() {
+  const k = keyOf(curDay), e = db.days[k];
+  if (!e) return;
+  for (const o of ["sym", "mood", "sl"]) {
+    if (!e[o]) continue;
+    for (const [s, v] of Object.entries(e[o])) if (v == null || v === "" || (o === "sym" && !v)) delete e[o][s];
+    if (!Object.keys(e[o]).length) delete e[o];
+  }
+  for (const f of ["bl", "mucus", "sex"]) if (!e[f]) delete e[f];
+  for (const f of ["med", "note", "sportNote"]) if (!(e[f] || "").trim()) delete e[f];
+  for (const f of ["sport", "weight"]) if (e[f] == null) delete e[f];
+  if (!hasContent(e)) delete db.days[k];
+}
+let hintTimer;
+function changed() {
+  cleanupDay(); save();
+  const h = document.getElementById("saved-hint");
+  h.textContent = storageOk ? "Gespeichert ✓" : "Nicht gespeichert!";
+  clearTimeout(hintTimer); hintTimer = setTimeout(() => (h.textContent = ""), 1500);
+}
+// Auswahl-Kacheln (eine Option oder keine)
+function picker(host, options, get, set, render) {
+  host.textContent = "";
+  options.forEach((o, i) => {
+    const b = el("button", { "aria-pressed": get() === i ? "true" : "false" }, render(o, i), el("span", { text: typeof o === "string" ? o : o[1] }));
+    b.onclick = () => { set(get() === i ? 0 : i); changed(); picker(host, options, get, set, render); if (host.id === "bleed") renderDaySubtitle(); };
+    host.append(b);
+  });
+}
+function sliderRow(id) {
+  const v = cur()?.sym?.[id] || 0;
+  const input = el("input", { type: "range", min: 0, max: 10, step: 1, value: v, "aria-label": SYM_NAME[id] });
+  const val = el("span", { class: "val" });
+  const paint = n => { input.style.setProperty("--fill", n * 10 + "%"); input.style.setProperty("--c", painVar(n)); val.textContent = n; val.classList.toggle("zero", !n); };
+  paint(v);
+  input.addEventListener("input", () => { const n = +input.value; paint(n); const en = getEntry(); en.sym = en.sym || {}; en.sym[id] = n; changed(); });
+  return el("div", { class: "sym-row" }, el("div", { class: "name", text: SYM_NAME[id] }), el("div", { class: "slot" }, input, val));
+}
+function optSlider(o) {
+  const wrap = el("div", { class: "opt" });
+  const input = el("input", { type: "range", min: o.min, max: o.max, step: o.step || 1, "aria-label": o.label });
+  const v = el("span", { class: "v" });
+  const reset = el("button", { class: "reset", "aria-label": o.label + " zurücksetzen", text: "×" });
+  const viewBox = o.view ? el("div") : null;
+  const paint = () => {
+    const x = o.get(), unset = x == null;
+    wrap.classList.toggle("unset", unset);
+    input.value = unset ? o.start : x;
+    input.style.setProperty("--fill", (unset ? 0 : ((x - o.min) / (o.max - o.min)) * 100) + "%");
+    input.style.setProperty("--c", "var(--series-1)");
+    if (o.text) { v.textContent = unset ? "–" : o.text(x); v.classList.toggle("unset", unset); }
+    reset.hidden = unset;
+    if (viewBox) { viewBox.textContent = ""; viewBox.append(o.view(unset ? null : x)); }
+  };
+  input.addEventListener("input", () => { o.set(+input.value); paint(); changed(); });
+  reset.onclick = () => { o.set(null); paint(); changed(); };
+  wrap.append(el("div", { class: "opt-head" }, el("span", { class: "lab", text: o.label }), o.text ? v : null, reset));
+  if (viewBox) wrap.append(viewBox);
+  wrap.append(input);
+  if (o.lo || o.hi) wrap.append(el("div", { class: "ends" }, el("span", { text: o.lo || "" }), el("span", { text: o.hi || "" })));
+  paint();
+  return wrap;
+}
+const setIn = (obj, key) => v => { const en = getEntry(); en[obj] = en[obj] || {}; en[obj][key] = v; };
+function renderDaySubtitle() {
+  const t = today(), diff = diffDays(curDay, t);
+  const cd = cycleDay(curDay);
+  document.getElementById("day-subtitle").textContent = DOW_L[curDay.getDay()] +
+    (diff === 0 ? " · heute" : diff === -1 ? " · gestern" : diff === 1 ? " · morgen" : "") + (cd ? ` · Zyklustag ${cd}` : "");
+}
+function renderDay() {
+  document.getElementById("day-title").textContent = fmtDate(curDay);
+  renderDaySubtitle();
+  const e = cur();
+  picker(document.getElementById("bleed"), BLEED, () => cur()?.bl || 0, v => { getEntry().bl = v; }, (o, i) => drops(i));
+  const sym = document.getElementById("symptoms");
+  sym.textContent = "";
+  for (const s of SYMPTOMS) sym.append(sliderRow(s.id));
+  const mood = document.getElementById("mood");
+  mood.textContent = "";
+  for (const m of MOOD) mood.append(optSlider({ label: m.name, min: 0, max: 10, start: 5, lo: "0 " + m.lo, hi: m.hi + " 10",
+    get: () => cur()?.mood?.[m.id] ?? null, set: setIn("mood", m.id), text: x => String(x) }));
+  picker(document.getElementById("mucus"), MUCUS, () => (cur()?.mucus || 0) - 1,
+    v => { getEntry().mucus = v + 1; }, o => el("span", { class: "ic", text: o[0] }));
+  // Schleim: erneutes Antippen hebt die Auswahl auf
+  [...document.getElementById("mucus").children].forEach((b, i) => b.onclick = () => {
+    const en = getEntry(); en.mucus = en.mucus === i + 1 ? 0 : i + 1; changed(); renderDay();
+  });
+  picker(document.getElementById("sex"), SEX, () => cur()?.sex || 0, v => { getEntry().sex = v; }, o => el("span", { class: "ic", text: o[0] }));
+  const sleep = document.getElementById("sleep");
+  sleep.textContent = "";
+  sleep.append(
+    optSlider({ label: "Schlafdauer", min: 0, max: 14, step: 0.5, start: 7, get: () => cur()?.sl?.h ?? null, set: setIn("sl", "h"), text: fmtHours, lo: "0 h", hi: "14 h" }),
+    optSlider({ label: "Schlafqualität", min: 1, max: 5, start: 3, get: () => cur()?.sl?.q ?? null, set: setIn("sl", "q"),
+      view: x => x == null ? el("div", { class: "symv" }, el("span", { class: "e", text: "·" }), el("span", { class: "t unset", text: "nicht erfasst – Regler bewegen" }))
+        : el("div", { class: "symv" }, el("span", { class: "e", text: SLEEP[x - 1][0] }), el("span", { class: "t", text: SLEEP[x - 1][1] })) }),
+  );
+  const sport = document.getElementById("sport");
+  sport.textContent = "";
+  sport.append(optSlider({ label: "Sport (Minuten)", min: 0, max: 180, step: 15, start: 30, get: () => cur()?.sport ?? null,
+    set: v => { getEntry().sport = v; }, text: x => `${x} min`, lo: "0", hi: "3 h" }));
+  document.getElementById("sport-note").value = e?.sportNote || "";
+  document.getElementById("weight").value = e?.weight != null ? fmtNum(e.weight) : "";
+  document.getElementById("day-med").value = e?.med || "";
+  document.getElementById("day-note").value = e?.note || "";
+}
+let textTimer;
+function bindText(elm, write) {
+  elm.addEventListener("input", () => { write(elm.value); clearTimeout(textTimer); textTimer = setTimeout(changed, 400); });
+  elm.addEventListener("blur", () => { clearTimeout(textTimer); if (cur()) changed(); });
+}
+bindText(document.getElementById("day-note"), v => { getEntry().note = v; });
+bindText(document.getElementById("day-med"), v => { getEntry().med = v; });
+bindText(document.getElementById("sport-note"), v => { getEntry().sportNote = v; });
+bindText(document.getElementById("weight"), v => {
+  const n = parseFloat(v.replace(",", "."));
+  getEntry().weight = isFinite(n) && n > 20 && n < 400 ? Math.round(n * 10) / 10 : null;
+});
+document.getElementById("day-clear").onclick = () => {
+  const k = keyOf(curDay);
+  if (!db.days[k]) { toast("Für diesen Tag gibt es keinen Eintrag"); return; }
+  if (!confirm(`Eintrag vom ${fmtDate(curDay)} löschen?`)) return;
+  delete db.days[k]; save(); renderDay(); toast("Eintrag gelöscht");
+};
+
+/* ------------------------------------------------------------------ *
+ * Auswertung
+ * ------------------------------------------------------------------ */
+let F = "6";
+try { F = localStorage.getItem(KEY + ".cycles") || "6"; } catch (e) {}
+document.getElementById("f-cycles").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  F = b.dataset.v; try { localStorage.setItem(KEY + ".cycles", F); } catch (e) {}
+  renderStats();
+});
+function tile(k, n, s) {
+  return el("div", { class: "tile" }, el("div", { class: "k", text: k }), el("div", { class: "n", text: n }), s ? el("div", { class: "s", text: s }) : null);
+}
+function renderStats() {
+  document.querySelectorAll("#f-cycles button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === F ? "true" : "false"));
+  const c = cycles();
+  const n = F === "all" ? Infinity : +F;
+  const done = c.done.slice(-n);
+  const all = c.list.slice(-(F === "all" ? c.list.length : n + 1)); // inkl. laufendem Zyklus
+  const lens = done.map(x => x.len), plens = all.map(x => x.plen);
+  const tiles = document.getElementById("tiles");
+  tiles.textContent = "";
+  const spread = lens.length >= 2 ? Math.max(...lens) - Math.min(...lens) : null;
+  tiles.append(
+    tile("Ø Zykluslänge", lens.length ? `${fmtNum(mean(lens))} T` : "–", lens.length ? `${Math.min(...lens)}–${Math.max(...lens)} Tage` : "noch kein ganzer Zyklus"),
+    tile("Ø Periodenlänge", plens.length ? `${fmtNum(mean(plens))} T` : "–", plens.length ? `${Math.min(...plens)}–${Math.max(...plens)} Tage` : "noch keine Periode"),
+    tile("Regelmäßigkeit", spread == null ? "–" : spread <= 7 ? "regelmäßig" : "schwankend",
+      spread == null ? "ab 2 Zyklen" : `Schwankung ${spread} ${spread === 1 ? "Tag" : "Tage"}`),
+    tile("Erfasste Zyklen", String(c.done.length), c.list.length ? `seit ${fmtShort(c.list[0].start)}${c.list[0].start.getFullYear()}` : "–"),
+  );
+  barChart(document.getElementById("cycle-chart"), done.map(x => ({ label: fmtShort(x.start), long: `Zyklus ab ${fmtDate(x.start)}`, v: x.len })),
+    "Tage", "Noch kein vollständiger Zyklus – dafür braucht es zwei eingetragene Perioden.", 35);
+  barChart(document.getElementById("period-chart"), all.map(x => ({ label: fmtShort(x.start), long: `Periode ab ${fmtDate(x.start)}`, v: x.plen })),
+    "Tage", "Noch keine Periode eingetragen.", 7);
+  cycleTable(all);
+  heatmap(all);
+}
+
+/* --- Säulendiagramm mit Durchschnittslinie --- */
+function barChart(host, rows, unit, emptyText, minTop) {
+  host.textContent = "";
+  if (!rows.length) { host.append(el("div", { class: "empty", text: emptyText })); return; }
+  const avg = mean(rows.map(r => r.v));
+  const top = Math.max(minTop, Math.ceil(Math.max(...rows.map(r => r.v)) / 5) * 5);
+  const W = Math.max(300, host.clientWidth || 340), H = 170;
+  const m = { l: 26, r: 30, t: 10, b: 22 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const NS = "http://www.w3.org/2000/svg";
+  const s = (tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Säulendiagramm, Durchschnitt ${fmtNum(avg)} ${unit}` });
+  const y = v => m.t + ih - (v / top) * ih;
+  const step = top > 20 ? 10 : top > 10 ? 5 : 2;
+  for (let v = 0; v <= top; v += step) {
+    svg.append(s("line", { x1: m.l, x2: m.l + iw, y1: y(v), y2: y(v), stroke: v === 0 ? "var(--line)" : "var(--grid)" }));
+    const t = s("text", { x: m.l - 6, y: y(v) + 4, "text-anchor": "end" }); t.textContent = v; svg.append(t);
+  }
+  const n = rows.length, slot = iw / n, bw = Math.min(28, slot - 4);
+  const labelEvery = Math.max(1, Math.ceil(n / Math.floor(iw / 44)));
+  const tip = el("div", { class: "tooltip" });
+  rows.forEach((r, i) => {
+    const x = m.l + slot * i + (slot - bw) / 2, h = Math.max(1, (r.v / top) * ih);
+    // Säule mit abgerundeter Oberkante
+    const rad = Math.min(4, bw / 2, h);
+    svg.append(s("path", { d: `M${x} ${y(0)}V${y(0) - h + rad}Q${x} ${y(0) - h} ${x + rad} ${y(0) - h}H${x + bw - rad}Q${x + bw} ${y(0) - h} ${x + bw} ${y(0) - h + rad}V${y(0)}Z`, fill: "var(--series-1)" }));
+    if (i % labelEvery === 0) { const t = s("text", { x: x + bw / 2, y: H - 6, "text-anchor": "middle" }); t.textContent = r.label; svg.append(t); }
+    const hit = s("rect", { x: m.l + slot * i, y: m.t, width: slot, height: ih, fill: "transparent", tabindex: 0 });
+    const showTip = () => {
+      tip.textContent = "";
+      tip.append(el("div", { class: "t", text: r.long }), el("div", {}, el("b", { text: `${r.v} ${unit}` })));
+      tip.style.display = "block";
+      const rect = svg.getBoundingClientRect(), sc = rect.width / W;
+      const tw = tip.offsetWidth;
+      tip.style.left = Math.max(0, Math.min(rect.width - tw, (x + bw / 2) * sc - tw / 2)) + "px";
+      tip.style.top = (y(r.v) * sc - 8) + "px";
+      tip.style.transform = "translateY(-100%)";
+    };
+    hit.addEventListener("pointerdown", showTip); hit.addEventListener("pointerenter", showTip); hit.addEventListener("focus", showTip);
+    hit.addEventListener("pointerleave", () => (tip.style.display = "none")); hit.addEventListener("blur", () => (tip.style.display = "none"));
+    svg.append(hit);
+  });
+  // Durchschnittslinie mit Beschriftung
+  svg.append(s("line", { x1: m.l, x2: m.l + iw, y1: y(avg), y2: y(avg), stroke: "var(--text-2)", "stroke-dasharray": "4 4", "pointer-events": "none" }));
+  const at = s("text", { x: m.l + iw + 4, y: y(avg) + 4, class: "lbl" }); at.textContent = "Ø " + fmtNum(avg, avg % 1 ? 1 : 0); svg.append(at);
+  host.append(svg, tip);
+}
+let showTable = false;
+document.getElementById("cycle-table-toggle").onclick = () => {
+  showTable = !showTable;
+  document.getElementById("cycle-table").hidden = !showTable;
+  document.getElementById("cycle-table-toggle").textContent = showTable ? "Tabelle ausblenden" : "Als Tabelle anzeigen";
+};
+function cycleTable(list) {
+  const box = document.getElementById("cycle-table");
+  box.textContent = "";
+  const t = el("table", { class: "data" }, el("tr", {}, el("th", { text: "Beginn" }), el("th", { class: "num", text: "Periode" }), el("th", { class: "num", text: "Zyklus" })));
+  for (const c of [...list].reverse()) t.append(el("tr", {},
+    el("td", { text: fmtDate(c.start) }), el("td", { class: "num", text: `${c.plen} T` }), el("td", { class: "num", text: c.len ? `${c.len} T` : "läuft" })));
+  box.append(t);
+}
+
+/* --- Heatmap: Symptome je Zyklustag --- */
+function heatmap(list) {
+  const host = document.getElementById("heat");
+  host.textContent = "";
+  document.getElementById("heat-legend").textContent = "";
+  const c = cycles();
+  if (!list.length) { host.append(el("div", { class: "empty", text: "Noch keine Periode eingetragen." })); document.getElementById("heat-sub").textContent = ""; return; }
+  // Tage den Zyklustagen zuordnen
+  const maxLen = Math.min(45, Math.max(c.avgCycle, ...list.map(x => x.len || diffDays(today(), x.start) + 1)));
+  const rows = [{ id: "_bl", name: "Blutung", get: e => e.bl || 0, max: 4, ramp: "bl" }, ...SYMPTOMS.map(s => ({ id: s.id, name: s.name, short: s.short, get: e => e.sym?.[s.id] || 0, max: 10 }))];
+  const agg = rows.map(() => Array.from({ length: maxLen }, () => ({ sum: 0, n: 0 })));
+  let used = 0;
+  for (const cy of list) {
+    const len = cy.len || diffDays(today(), cy.start) + 1;
+    for (let i = 0; i < Math.min(len, maxLen); i++) {
+      const e = db.days[keyOf(addDays(cy.start, i))];
+      if (!hasContent(e)) continue;
+      used++;
+      rows.forEach((r, ri) => { agg[ri][i].sum += r.get(e); agg[ri][i].n++; });
+    }
+  }
+  const visible = rows.filter((r, ri) => agg[ri].some(a => a.sum > 0));
+  document.getElementById("heat-sub").textContent =
+    `Durchschnittliche Stärke je Zyklustag über ${list.length} ${list.length === 1 ? "Zyklus" : "Zyklen"} (inkl. dem laufenden). Tage ohne Wert zählen als 0. Antippen zeigt den Wert, seitlich wischen zeigt weitere Tage.`;
+  if (!visible.some(r => r.id !== "_bl")) { host.append(el("div", { class: "empty", text: used ? "In diesen Zyklen wurden noch keine Symptome eingetragen." : "Noch keine Einträge in diesen Zyklen." })); if (!visible.length) return; }
+  const ovDay = c.avgCycle - db.settings.luteal + 1;
+  const table = el("table", { class: "heat" });
+  const head = el("tr", {}, el("th", { class: "rl", text: "Tag" }));
+  for (let i = 1; i <= maxLen; i++) head.append(el("th", { class: i === ovDay ? "ov" : "", text: i === 1 || i % 5 === 0 || i === ovDay ? String(i) : "" }));
+  table.append(head);
+  const tipHost = document.getElementById("heat-tip-host");
+  tipHost.textContent = "";
+  const tip = el("div", { class: "tooltip" });
+  tipHost.append(tip);
+  for (const r of visible) {
+    const ri = rows.indexOf(r);
+    const tr = el("tr", {}, el("th", { class: "rl", text: r.short || r.name }));
+    agg[ri].forEach((a, i) => {
+      const v = a.n ? a.sum / a.n : null;
+      let bg = "var(--h0)";
+      if (v) bg = r.ramp === "bl" ? `var(--bl${Math.max(1, Math.min(4, Math.round(v)))})` : `var(--h${Math.max(1, Math.min(7, Math.ceil((v / 10) * 7)))})`;
+      const td = el("td", { style: `background:${bg}`, tabindex: 0, "aria-label": `${r.name}, Zyklustag ${i + 1}: ${v == null ? "keine Daten" : fmtNum(v)}` });
+      const showTip = () => {
+        tip.textContent = "";
+        tip.append(el("div", { class: "t", text: `${r.name} · Zyklustag ${i + 1}` }),
+          el("div", {}, v == null ? "keine Einträge" : el("b", { text: r.ramp === "bl" ? `Ø ${fmtNum(v)} von 4` : `Ø ${fmtNum(v)} von 10` }), v == null ? null : ` (${a.n} ${a.n === 1 ? "Tag" : "Tage"})`));
+        tip.style.display = "block";
+        const hr = tipHost.getBoundingClientRect(), cr = td.getBoundingClientRect();
+        const tw = tip.offsetWidth;
+        tip.style.left = Math.max(0, Math.min(hr.width - tw, cr.left - hr.left + cr.width / 2 - tw / 2)) + "px";
+        tip.style.top = (cr.top - hr.top - 6) + "px";
+        tip.style.transform = "translateY(-100%)";
+      };
+      td.addEventListener("pointerdown", showTip); td.addEventListener("pointerenter", showTip); td.addEventListener("focus", showTip);
+      td.addEventListener("pointerleave", () => (tip.style.display = "none")); td.addEventListener("blur", () => (tip.style.display = "none"));
+      tr.append(td);
+    });
+    table.append(tr);
+  }
+  host.append(table);
+  const lg = document.getElementById("heat-legend");
+  lg.append(el("span", { text: "schwach" }));
+  for (let i = 1; i <= 7; i++) lg.append(el("i", { style: `background:var(--h${i})` }));
+  lg.append(el("span", { text: "stark" }), el("span", { style: "margin-left:10px" }, el("b", { style: "color:var(--fert)", text: String(ovDay) }), " = Eisprung (Ø)"));
+}
+document.addEventListener("pointerdown", e => {
+  if (!e.target.closest(".heat td, .chart-wrap")) document.querySelectorAll(".tooltip").forEach(t => (t.style.display = "none"));
+});
+
+/* ------------------------------------------------------------------ *
+ * Einstellungen, Export, Import
+ * ------------------------------------------------------------------ */
+const SETTINGS = [
+  { k: "cycle", name: "Zykluslänge", hint: "Startwert in Tagen", min: 18, max: 45 },
+  { k: "period", name: "Periodenlänge", hint: "Startwert in Tagen", min: 2, max: 10 },
+  { k: "luteal", name: "Lutealphase", hint: "Tage vom Eisprung bis zur Periode", min: 10, max: 16 },
+  { k: "pms", name: "PMS-Phase", hint: "Tage vor der Periode", min: 0, max: 10 },
+];
+function renderSettings() {
+  const box = document.getElementById("settings");
+  box.textContent = "";
+  for (const s of SETTINGS) {
+    const val = el("span", { text: db.settings[s.k] });
+    const step = d => () => { db.settings[s.k] = Math.max(s.min, Math.min(s.max, db.settings[s.k] + d)); save(); val.textContent = db.settings[s.k]; };
+    box.append(el("div", { class: "setting" },
+      el("span", {}, s.name, el("small", { text: s.hint })),
+      el("div", { class: "stepper" }, el("button", { text: "−", "aria-label": s.name + " verringern", onclick: step(-1) }), val, el("button", { text: "+", "aria-label": s.name + " erhöhen", onclick: step(1) }))));
+  }
+}
+function renderStorageInfo() {
+  const info = document.getElementById("storage-info");
+  if (!info) return;
+  const n = Object.keys(db.days).length;
+  const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  info.textContent = `${n} ${n === 1 ? "Tag" : "Tage"} gespeichert. ` +
+    "Alle Daten bleiben nur auf diesem Gerät im Browser-Speicher und werden bei jedem Start automatisch geladen. " +
+    (standalone ? "Die App läuft vom Home-Bildschirm – so löscht Safari die Daten nicht automatisch. " :
+      "Tipp: Über „Teilen → Zum Home-Bildschirm“ hinzufügen. Im normalen Safari-Tab kann iOS Daten nach längerer Nichtbenutzung löschen. ") +
+    (persisted === true ? "Dauerhafte Speicherung ist aktiv. " : "") +
+    (db.lastExport ? `Letzte Sicherung: ${fmtDate(new Date(db.lastExport))}.` : "Noch keine Sicherung exportiert.");
+}
+function renderData() { renderSettings(); renderStorageInfo(); }
+async function shareOrDownload(name, text, mime) {
+  const blob = new Blob([text], { type: mime });
+  const file = new File([blob], name, { type: mime });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: name }); return true; }
+    catch (e) { if (e.name === "AbortError") return false; }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = el("a", { href: url, download: name });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return true;
+}
+async function exportJson() {
+  const out = { app: "regelwerk", exported: new Date().toISOString(), ...db };
+  delete out.lastExport;
+  const ok = await shareOrDownload(`regelwerk-${keyOf(today())}.json`, JSON.stringify(out, null, 1), "application/json");
+  if (ok) { db.lastExport = new Date().toISOString(); save(); renderBackupBanner(); if (currentView === "data") renderData(); toast("Sicherung erstellt"); }
+}
+document.getElementById("export-json").onclick = exportJson;
+document.getElementById("export-csv").onclick = () => {
+  const esc = v => { const s = String(v ?? ""); return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const head = ["Datum", "Wochentag", "Zyklustag", "Blutung", ...SYMPTOMS.map(s => s.name), ...MOOD.map(m => m.name),
+    "Zervixschleim", "Sex", "Schlafdauer (h)", "Schlafqualität (1-5)", "Sport (min)", "Sportart", "Gewicht (kg)", "Medikamente", "Notiz"];
+  const lines = [head.map(esc).join(";")];
+  for (const k of Object.keys(db.days).sort()) {
+    const e = db.days[k], d = parseKey(k);
+    lines.push([k, DOW_L[d.getDay()], cycleDay(d) ?? "", e.bl ? BLEED[e.bl].replace("­", "") : "",
+      ...SYMPTOMS.map(s => e.sym?.[s.id] || ""), ...MOOD.map(m => e.mood?.[m.id] ?? ""),
+      e.mucus ? MUCUS[e.mucus - 1][1] : "", e.sex ? SEX[e.sex][1].replace("­", "") : "",
+      e.sl?.h != null ? fmtNum(e.sl.h) : "", e.sl?.q ?? "", e.sport ?? "", e.sportNote || "",
+      e.weight != null ? fmtNum(e.weight) : "", e.med || "", e.note || ""].map(esc).join(";"));
+  }
+  shareOrDownload(`regelwerk-${keyOf(today())}.csv`, "﻿" + lines.join("\r\n"), "text/csv");
+};
+function sanitizeEntry(e) {
+  const num = (v, lo, hi, step = 1) => { const n = Math.round(+v / step) * step; return v != null && v !== "" && isFinite(n) && n >= lo && n <= hi ? n : null; };
+  const str = v => typeof v === "string" && v.trim() ? v : null;
+  const out = {};
+  const bl = num(e.bl, 1, 4); if (bl) out.bl = bl;
+  const sym = {}; for (const s of SYMPTOMS) { const n = num(e.sym?.[s.id], 1, 10); if (n) sym[s.id] = n; }
+  if (Object.keys(sym).length) out.sym = sym;
+  const mood = {}; for (const m of MOOD) { const n = num(e.mood?.[m.id], 0, 10); if (n != null) mood[m.id] = n; }
+  if (Object.keys(mood).length) out.mood = mood;
+  const mu = num(e.mucus, 1, MUCUS.length); if (mu) out.mucus = mu;
+  const sx = num(e.sex, 1, 2); if (sx) out.sex = sx;
+  const sl = {}; const h = num(e.sl?.h, 0, 14, 0.5); if (h != null) sl.h = h; const q = num(e.sl?.q, 1, 5); if (q) sl.q = q;
+  if (Object.keys(sl).length) out.sl = sl;
+  const sp = num(e.sport, 0, 600); if (sp != null) out.sport = sp;
+  const w = num(e.weight, 20, 400, 0.1); if (w != null) out.weight = Math.round(w * 10) / 10;
+  for (const f of ["sportNote", "med", "note"]) if (str(e[f])) out[f] = e[f];
+  return out;
+}
+let importMode = "merge";
+document.getElementById("import-merge").onclick = () => { importMode = "merge"; document.getElementById("import-file").click(); };
+document.getElementById("import-replace").onclick = () => { importMode = "replace"; document.getElementById("import-file").click(); };
+document.getElementById("import-file").addEventListener("change", async ev => {
+  const f = ev.target.files[0]; ev.target.value = "";
+  if (!f) return;
+  let data;
+  try { data = JSON.parse(await f.text()); } catch (e) { alert("Die Datei ist keine gültige Sicherung (.json)."); return; }
+  if (!data || typeof data.days !== "object") { alert("In der Datei wurden keine Tageseinträge gefunden."); return; }
+  const incoming = normalize(data);
+  const clean = {};
+  for (const [k, e] of Object.entries(incoming.days)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !e || typeof e !== "object") continue;
+    const c = sanitizeEntry(e);
+    if (hasContent(c)) clean[k] = c;
+  }
+  const n = Object.keys(clean).length;
+  if (importMode === "replace") {
+    if (!confirm(`Alle vorhandenen Einträge durch ${n} Tage aus der Datei ersetzen?`)) return;
+    db = { version: 1, days: clean, settings: incoming.settings, lastExport: db.lastExport };
+  } else {
+    let conflicts = 0;
+    for (const k of Object.keys(clean)) if (db.days[k]) conflicts++;
+    let overwrite = true;
+    if (conflicts) overwrite = confirm(`${conflicts} Tage gibt es sowohl hier als auch in der Datei.\n\nOK = Werte aus der Datei verwenden\nAbbrechen = vorhandene Werte behalten`);
+    for (const [k, e] of Object.entries(clean)) if (!db.days[k] || overwrite) db.days[k] = e;
+  }
+  save(); renderData(); toast(`${n} Tage geladen`);
+});
+document.getElementById("wipe").onclick = () => {
+  if (!confirm("Wirklich ALLE Einträge löschen? Das kann nicht rückgängig gemacht werden.")) return;
+  if (!confirm("Ganz sicher? Hast du eine Sicherung?")) return;
+  db = normalize({}); save(); renderData(); toast("Alle Daten gelöscht");
+};
+
+window.addEventListener("storage", e => { if (e.key === KEY) { db = load(); cycleCache = null; show(currentView); } });
+let lastToday = keyOf(today());
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && keyOf(today()) !== lastToday) {
+    lastToday = keyOf(today()); curDay = today(); cycleCache = null; show(currentView);
+  }
+});
+let resizeTimer;
+window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => currentView === "stats" && renderStats(), 150); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => currentView === "cal" && renderCal());
+
+show("cal");
+</script>
+</body>
+</html>
